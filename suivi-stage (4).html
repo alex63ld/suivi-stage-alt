@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Suivi de mes candidatures (stage et alternance)</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1ea;--panel:#fbfcf8;--ink:#1e2a22;--mute:#5a6a5f;--line:#cfd8c8;--accent:#2f6b4a;--accent-ink:#fff;--ok:#2f7d4f;--warn:#b0651a;--bad:#a8402f;--info:#2b6a8f;--sky1:#cfe3ee;--sky2:#f3efe2;--m1:#9fb4bf;--m2:#5f7f78;--m3:#264a3a;--snow:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#101a15;--panel:#172420;--ink:#e4ece5;--mute:#98aa9d;--line:#2b3d33;--accent:#7cc79a;--accent-ink:#0f1a14;--ok:#7cc79a;--warn:#e8b063;--bad:#ee9482;--info:#7db8d9;--sky1:#16283a;--sky2:#2a3a3a;--m1:#3c5266;--m2:#2a463f;--m3:#12261d;--snow:#c9d8e2;}}
+:root[data-theme="dark"]{--bg:#101a15;--panel:#172420;--ink:#e4ece5;--mute:#98aa9d;--line:#2b3d33;--accent:#7cc79a;--accent-ink:#0f1a14;--ok:#7cc79a;--warn:#e8b063;--bad:#ee9482;--info:#7db8d9;--sky1:#16283a;--sky2:#2a3a3a;--m1:#3c5266;--m2:#2a463f;--m3:#12261d;--snow:#c9d8e2;}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 "Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:980px;margin:0 auto;padding:24px 16px 64px}
+h1{font:800 clamp(1.8rem,4.5vw,2.6rem)/1.1 Fraunces,Georgia,serif;margin:0 0 4px;color:var(--accent)}
+.sub{color:var(--mute);margin:0 0 20px}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 14px;min-width:96px}
+.stat b{display:block;font:800 1.6rem/1.1 Fraunces,Georgia,serif;color:var(--accent)}
+.stat span{color:var(--mute);font-size:.85rem}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;align-items:center}
+input,select,textarea,button{font:inherit;color:inherit}
+input[type=text],input[type=url],input[type=date],select,textarea{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:9px 11px}
+textarea{resize:vertical;min-height:70px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.bar input[type=text]{flex:1 1 200px;width:auto}
+.bar select{width:auto}
+button{cursor:pointer;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:9px 14px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+button.danger{color:var(--bad)}
+button.small{padding:5px 10px;font-size:.88rem}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:20px}
+.panel[hidden]{display:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+label{display:block;font-size:.9rem;font-weight:600;margin-bottom:4px}
+.full{grid-column:1/-1}
+.checks{display:flex;gap:20px;flex-wrap:wrap;align-items:center}
+.checks label{display:flex;gap:8px;align-items:center;font-weight:400;margin:0;font-size:1rem}
+.checks input{width:18px;height:18px;accent-color:var(--accent)}
+.actions{display:flex;gap:8px;margin-top:16px}
+.item{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--c,var(--line));border-radius:10px;padding:14px 16px;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:8px 16px}
+.item h3{margin:0;font:600 1.2rem/1.3 Fraunces,Georgia,serif}
+.meta{color:var(--mute);font-size:.9rem;margin:2px 0 0}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tag{font-size:.82rem;border:1px solid var(--line);border-radius:99px;padding:2px 10px;color:var(--mute)}
+.tag.yes{color:var(--ok);border-color:var(--ok)}
+.tag.no{color:var(--warn);border-color:var(--warn)}
+.note{margin:8px 0 0;font-size:.92rem;white-space:pre-wrap}
+.side{display:flex;flex-direction:column;gap:6px;align-items:flex-end}
+.side select{width:auto;min-width:170px;border-color:var(--c,var(--line));font-weight:600}
+.row{display:flex;gap:6px}
+.empty{text-align:center;color:var(--mute);padding:36px 12px;border:1px dashed var(--line);border-radius:12px}
+a{color:var(--accent)}
+footer{display:flex;gap:8px;flex-wrap:wrap;margin-top:24px;align-items:center;color:var(--mute);font-size:.9rem}
+@media(max-width:560px){.item{grid-template-columns:1fr}.side{align-items:stretch}.side select{width:100%}}
+
+body{background:linear-gradient(var(--bg),var(--bg))}
+.peaks{display:block;width:100%;height:clamp(120px,22vw,190px);background:linear-gradient(var(--sky1),var(--sky2))}
+.peaks svg{display:block;width:100%;height:100%}
+main{margin-top:-8px}
+.stat{border-radius:4px 14px 4px 14px;border-color:var(--line)}
+.item{border-radius:4px 16px 4px 16px}
+.panel{border-radius:4px 18px 4px 18px}
+button{border-radius:999px}
+input[type=text],input[type=url],input[type=date],select,textarea{border-radius:8px}
+.empty{border-radius:4px 18px 4px 18px}
+.tabs{display:flex;gap:8px;margin:0 0 16px;flex-wrap:wrap}
+.tabs button{padding:8px 18px;font-weight:600}
+.tabs button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.catb{font-weight:600;color:var(--accent)}
+.views button{font-size:1rem}
+.views button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.sec{font:600 1.3rem/1.3 Fraunces,Georgia,serif;margin:22px 0 10px;color:var(--accent)}
+.task{display:flex;gap:10px;align-items:center;background:var(--panel);border:1px solid var(--line);border-left:5px solid var(--info);border-radius:4px 14px 4px 14px;padding:10px 14px;margin-bottom:8px;flex-wrap:wrap}
+.task.late{border-left-color:var(--bad)}.task.done{border-left-color:var(--ok);opacity:.65}
+.task.done .tt{text-decoration:line-through}
+.task input[type=checkbox]{width:22px;height:22px;flex:none;accent-color:var(--accent)}
+.task .tt{flex:1 1 180px}
+.task input[type=date]{width:auto;padding:4px 8px}
+.late-t{color:var(--bad);font-weight:600;font-size:.85rem}
+.calhead{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.calhead strong{text-transform:capitalize;font:600 1.15rem Fraunces,Georgia,serif}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .wd{text-align:center;color:var(--mute);font-size:.8rem;font-weight:600}
+.day{min-height:64px;padding:4px;border:1px solid var(--line);background:var(--panel);border-radius:8px;text-align:left;display:flex;flex-direction:column;gap:2px;overflow:hidden;font-size:.8rem}
+.day.out{opacity:.4}.day.today{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.day.sel{background:var(--accent);color:var(--accent-ink)}
+.day .dn{font-weight:700}
+.chip{display:block;font-size:.7rem;line-height:1.25;padding:1px 4px;border-radius:4px;background:var(--info);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip.late{background:var(--bad)}.chip.done{background:var(--ok);text-decoration:line-through}
+@media (max-width:560px){.day{min-height:52px}.chip{font-size:0;height:6px;padding:0}}
+</style>
+</head>
+<body>
+<div class="peaks" aria-hidden="true"><svg viewBox="0 0 1000 190" preserveAspectRatio="xMidYMax slice">
+<circle cx="820" cy="48" r="20" fill="var(--snow)" opacity=".85"/>
+<polygon fill="var(--m1)" points="0,190 0,120 90,70 150,105 260,30 350,100 430,60 540,120 640,45 760,115 860,75 1000,125 1000,190"/>
+<polygon fill="var(--snow)" points="260,30 232,60 250,54 262,66 275,55 292,62"/>
+<polygon fill="var(--snow)" points="640,45 616,72 634,66 645,77 658,66 672,72"/>
+<polygon fill="var(--m2)" points="0,190 0,150 120,95 210,140 330,85 450,145 560,110 690,150 800,100 920,145 1000,120 1000,190"/>
+<polygon fill="var(--snow)" points="330,85 310,104 325,99 333,108 343,99 355,104"/>
+<polygon fill="var(--snow)" points="800,100 782,116 795,112 802,120 811,112 822,116"/>
+<g fill="var(--m3)">
+<polygon points="0,190 0,172 20,120 40,172 55,190"/><polygon points="30,190 45,140 62,190"/>
+<polygon points="70,190 88,132 108,190"/><polygon points="120,190 134,150 150,190"/>
+<polygon points="850,190 868,138 888,190"/><polygon points="890,190 906,124 926,190"/>
+<polygon points="935,190 952,144 970,190"/><polygon points="965,190 982,128 1000,190"/>
+<polygon points="0,190 1000,190 1000,178 700,184 400,176 200,184 0,178"/></g></svg></div>
+<main>
+  <h1>Mes candidatures</h1>
+  <p class="sub">BUT 2e année : stages et alternance, de l'envoi jusqu'à la réponse.</p>
+
+  <nav class="tabs views" id="views">
+    <button type="button" data-view="cand">Candidatures</button>
+    <button type="button" data-view="todo">À faire et calendrier</button>
+  </nav>
+  <div id="viewCand">
+  <div class="tabs" id="tabs" role="tablist"></div>
+  <div class="stats" id="stats"></div>
+
+  <div class="bar">
+    <input type="text" id="q" placeholder="Rechercher une entreprise ou un sujet" aria-label="Rechercher">
+    <select id="fs" aria-label="Filtrer par avancement"></select>
+    <select id="ft" aria-label="Filtrer par type">
+      <option value="">Tous les types</option>
+      <option value="offre">Réponse à une offre</option>
+      <option value="spontanee">Candidature spontanée</option>
+    </select>
+    <button class="primary" id="add">Ajouter une candidature</button>
+  </div>
+
+  <form class="panel" id="form" hidden>
+    <div class="grid">
+      <div><label for="company">Entreprise</label><input type="text" id="company" required></div>
+      <div><label for="subject">Sujet ou poste (facultatif)</label><input type="text" id="subject"></div>
+      <div><label for="cat">Rubrique</label>
+        <select id="cat"><option value="stage">Stage</option><option value="alternance">Alternance</option></select></div>
+      <div><label for="type">Type de candidature</label>
+        <select id="type"><option value="offre">Réponse à une offre</option><option value="spontanee">Candidature spontanée</option></select></div>
+      <div><label for="date">Date d'envoi</label><input type="date" id="date"></div>
+      <div class="full checks">
+        <label><input type="checkbox" id="cv"> CV envoyé</label>
+        <label><input type="checkbox" id="lm"> Lettre de motivation envoyée</label>
+      </div>
+      <div><label for="status">Avancement</label><select id="status"></select>
+        <input type="text" id="customStatus" placeholder="Ex. : attente du sujet de stage" style="margin-top:6px" hidden></div>
+      <div><label for="link">Lien de l'offre (facultatif)</label><input type="url" id="link" placeholder="https://"></div>
+      <div class="full"><label for="notes">Notes (contact, date d'entretien, relance à faire…)</label><textarea id="notes"></textarea></div>
+    </div>
+    <div class="actions">
+      <button class="primary" type="submit" id="save">Enregistrer</button>
+      <button type="button" id="cancel">Annuler</button>
+    </div>
+  </form>
+
+  <div id="list"></div>
+
+  </div>
+
+  <section id="viewTodo" hidden>
+    <form class="panel" id="tform">
+      <div class="grid">
+        <div class="full"><label for="ttext">Chose à faire</label><input type="text" id="ttext" placeholder="Ex. : relancer l'entreprise X, finir ma lettre de motivation" required></div>
+        <div><label for="tdate">Date limite (facultatif)</label><input type="date" id="tdate"></div>
+        <div style="align-self:end"><button class="primary" type="submit">Ajouter à la liste</button></div>
+      </div>
+    </form>
+    <h2 class="sec">Ma liste</h2>
+    <div id="tlist"></div>
+    <h2 class="sec">Calendrier</h2>
+    <div class="calhead">
+      <button type="button" class="small" id="cprev" aria-label="Mois précédent">←</button>
+      <strong id="ctitle"></strong>
+      <button type="button" class="small" id="cnext" aria-label="Mois suivant">→</button>
+      <button type="button" class="small" id="ctoday">Aujourd'hui</button>
+    </div>
+    <div class="cal" id="cal"></div>
+    <div id="dayinfo"></div>
+  </section>
+
+  <footer><span id="sync" role="status"></span>
+    <button class="small" id="export">Exporter (sauvegarde)</button>
+    <button class="small" id="import">Importer une sauvegarde</button>
+    <input type="file" id="file" accept="application/json" hidden>
+    <span>Les données restent dans ce navigateur : exporte-les de temps en temps.</span>
+  </footer>
+</main>
+
+<script>
+const STATUTS = [
+  {id:"envoyee", label:"Candidature envoyée", c:"var(--mute)"},
+  {id:"accuse", label:"Accusé de réception", c:"var(--info)"},
+  {id:"relance", label:"Relancé", c:"var(--warn)"},
+  {id:"entretien_propose", label:"Entretien proposé", c:"var(--info)"},
+  {id:"entretien_passe", label:"Entretien passé", c:"var(--info)"},
+  {id:"acceptee", label:"Stage accepté", c:"var(--ok)"},
+  {id:"refusee", label:"Refusée", c:"var(--bad)"},
+  {id:"sans_reponse", label:"Sans réponse", c:"var(--mute)"}
+];
+const KEY = "suivi-stage-v1";
+let items = [];
+let editId = null;
+const $ = id => document.getElementById(id);
+let tab = "tout";
+const FINAL = ["acceptee","refusee","sans_reponse"];
+function st(id, cat){
+  if(String(id).startsWith("x:")) return {id, label:id.slice(2), c:"var(--warn)"};
+  const s = STATUTS.find(x => x.id === id) || STATUTS[0];
+  if(id === "acceptee") return {...s, label: cat === "alternance" ? "Alternance acceptée" : "Stage accepté"};
+  return s;
+}
+function statusOptions(cur){
+  const customs = [...new Set(items.map(i => i.status).filter(x => String(x).startsWith("x:")))];
+  return STATUTS.map(x => `<option value="${x.id}"${x.id === cur ? " selected" : ""}>${x.id === "acceptee" ? "Accepté(e)" : x.label}</option>`).join("")
+    + customs.map(x => `<option value="${esc(x)}"${x === cur ? " selected" : ""}>${esc(x.slice(2))}</option>`).join("")
+    + '<option value="__new">✏️ Autre (écrire…)</option>';
+}
+function refreshSelects(){
+  const f = $("fs").value, sv = $("status").value;
+  $("fs").innerHTML = '<option value="">Tous les avancements</option>' + statusOptions("").replace(/<option value="__new">.*?<\/option>/, "");
+  $("fs").value = f;
+  $("status").innerHTML = statusOptions(sv);
+  if(sv && sv !== "__new") $("status").value = sv;
+}
+
+const DB = "https://stage-bbdd3-default-rtdb.europe-west1.firebasedatabase.app/candidatures.json";
+function setSync(t, bad){ const e = $("sync"); if(e){ e.textContent = t; e.style.color = bad ? "var(--bad)" : "var(--mute)"; } }
+function loadLocal(){ try{ const r = localStorage.getItem(KEY); items = r ? JSON.parse(r) : []; }catch(e){ items = []; } }
+function saveLocal(){ try{ localStorage.setItem(KEY, JSON.stringify(items)); }catch(e){} }
+async function save(){
+  saveLocal(); setSync("Synchronisation…");
+  try{
+    const r = await fetch(DB, {method:"PUT", body: JSON.stringify(items)});
+    if(!r.ok) throw new Error(r.status);
+    setSync("Synchronisé avec Firebase");
+  }catch(e){ setSync("Échec de la synchronisation Firebase (copie gardée sur cet appareil)", true); }
+}
+async function load(){
+  loadLocal(); render(); setSync("Connexion à Firebase…");
+  try{
+    const r = await fetch(DB);
+    if(!r.ok) throw new Error(r.status);
+    const d = await r.json();
+    if(d){ items = (Array.isArray(d) ? d : Object.values(d)).filter(Boolean); saveLocal(); render(); setSync("Synchronisé avec Firebase"); }
+    else if(items.length){ await save(); }
+    else setSync("Synchronisé avec Firebase");
+  }catch(e){ setSync("Firebase inaccessible : données locales affichées", true); }
+}
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function fmt(d){ if(!d) return ""; const [y,m,j] = d.split("-"); return j+"/"+m+"/"+y; }
+
+function init(){
+  load();
+}
+
+function render(){
+  refreshSelects();
+  const pool = items.filter(i => tab === "tout" || (i.cat || "stage") === tab);
+  $("tabs").innerHTML = [["tout","Tout"],["stage","Stage"],["alternance","Alternance"]].map(([k,l]) => {
+    const c = items.filter(i => k === "tout" || (i.cat || "stage") === k).length;
+    return `<button type="button" role="tab" data-tab="${k}" class="${k === tab ? "on" : ""}">${l} (${c})</button>`;
+  }).join("");
+  const total = pool.length;
+  const n = f => pool.filter(i => f(i.status)).length;
+  $("stats").innerHTML = [
+    [total,"candidatures"],
+    [n(x => !FINAL.includes(x)),"en cours"],
+    [n(x => ["entretien_propose","entretien_passe"].includes(x)),"entretiens"],
+    [n(x => x === "acceptee"),"acceptées"],
+    [n(x => x === "refusee"),"refusées"]
+  ].map(([v,l]) => `<div class="stat"><b>${v}</b><span>${l}</span></div>`).join("");
+
+  const q = $("q").value.trim().toLowerCase(), fs = $("fs").value, ft = $("ft").value;
+  const shown = pool.filter(i =>
+    (!q || (i.company + " " + i.subject).toLowerCase().includes(q)) &&
+    (!fs || i.status === fs) && (!ft || i.type === ft)
+  ).sort((a,b) => (b.date || "").localeCompare(a.date || "") || b.created - a.created);
+
+  if(!shown.length){
+    $("list").innerHTML = `<div class="empty">${total ? "Aucune candidature ne correspond à ces filtres." : "Aucune candidature pour l'instant. Clique sur « Ajouter une candidature » pour commencer."}</div>`;
+    return;
+  }
+  $("list").innerHTML = shown.map(i => {
+    const s = st(i.status, i.cat);
+    const link = i.link ? ` · <a href="${esc(i.link)}" target="_blank" rel="noopener">voir l'offre</a>` : "";
+    return `<article class="item" style="--c:${s.c}">
+      <div>
+        <h3>${esc(i.company)}${i.subject ? " — " + esc(i.subject) : ""}</h3>
+        <p class="meta"><span class="catb">${i.cat === "alternance" ? "Alternance" : "Stage"}</span> · ${i.type === "spontanee" ? "Candidature spontanée" : "Réponse à une offre"}${i.date ? " · envoyée le " + fmt(i.date) : ""}${link}</p>
+        <div class="tags">
+          <span class="tag ${i.cv ? "yes" : "no"}">${i.cv ? "CV envoyé" : "CV à envoyer"}</span>
+          <span class="tag ${i.lm ? "yes" : "no"}">${i.lm ? "Lettre envoyée" : "Lettre à envoyer"}</span>
+        </div>
+        ${i.notes ? `<p class="note">${esc(i.notes)}</p>` : ""}
+      </div>
+      <div class="side">
+        <select data-status="${i.id}" aria-label="Avancement de ${esc(i.company)}">${statusOptions(i.status)}</select>
+        <div class="row"><button class="small" data-edit="${i.id}">Modifier</button><button class="small danger" data-del="${i.id}">Supprimer</button></div>
+      </div>
+    </article>`;
+  }).join("");
+}
+
+function openForm(item){
+  editId = item ? item.id : null;
+  const d = item || {cat: tab === "alternance" ? "alternance" : "stage", company:"",subject:"",type:"offre",date:new Date().toISOString().slice(0,10),cv:true,lm:true,status:"envoyee",link:"",notes:""};
+  $("cat").value = d.cat || "stage"; $("company").value = d.company; $("subject").value = d.subject; $("type").value = d.type; $("date").value = d.date;
+  $("cv").checked = d.cv; $("lm").checked = d.lm; refreshSelects(); $("status").value = d.status; $("customStatus").value = ""; $("customStatus").hidden = true; $("link").value = d.link; $("notes").value = d.notes;
+  $("form").hidden = false; $("company").focus();
+  $("form").scrollIntoView({behavior:"smooth", block:"start"});
+}
+function closeForm(){ $("form").hidden = true; editId = null; }
+
+$("add").onclick = () => openForm(null);
+$("cancel").onclick = closeForm;
+$("form").onsubmit = e => {
+  e.preventDefault();
+  const data = {cat:$("cat").value, company:$("company").value.trim(), subject:$("subject").value.trim(), type:$("type").value, date:$("date").value,
+    cv:$("cv").checked, lm:$("lm").checked, status:$("status").value, link:$("link").value.trim(), notes:$("notes").value.trim()};
+  if(!data.company) return;
+  if(data.status === "__new"){ const t = $("customStatus").value.trim(); if(!t){ $("customStatus").focus(); return; } data.status = "x:" + t; }
+  if(editId){ items = items.map(i => i.id === editId ? {...i, ...data} : i); }
+  else { items.push({id:"c" + Date.now() + Math.random().toString(36).slice(2,6), created:Date.now(), ...data}); }
+  save(); closeForm(); render();
+};
+$("list").onclick = e => {
+  const ed = e.target.closest("[data-edit]"), dl = e.target.closest("[data-del]");
+  if(ed) openForm(items.find(i => i.id === ed.dataset.edit));
+  if(dl && confirm("Supprimer cette candidature ?")){ items = items.filter(i => i.id !== dl.dataset.del); save(); render(); }
+};
+$("list").onchange = e => {
+  const s = e.target.dataset.status;
+  if(s){
+    let v = e.target.value;
+    if(v === "__new"){ const t = (prompt("Écris ton avancement (ex. : attente du sujet de stage) :") || "").trim(); if(!t){ render(); return; } v = "x:" + t; }
+    items = items.map(i => i.id === s ? {...i, status:v} : i); save(); render();
+  }
+};
+$("status").onchange = () => { const nw = $("status").value === "__new"; $("customStatus").hidden = !nw; if(nw) $("customStatus").focus(); };
+$("tabs").onclick = e => { const b = e.target.closest("[data-tab]"); if(b){ tab = b.dataset.tab; render(); } };
+["q","fs","ft"].forEach(id => $(id).addEventListener("input", render));
+
+$("export").onclick = () => {
+  const blob = new Blob([JSON.stringify(items, null, 2)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "candidatures-stage.json"; a.click();
+};
+$("import").onclick = () => $("file").click();
+$("file").onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try{
+      const data = JSON.parse(r.result);
+      if(!Array.isArray(data)) throw 0;
+      if(confirm("Remplacer tes candidatures actuelles par cette sauvegarde ?")){ items = data; save(); render(); }
+    }catch(err){ alert("Ce fichier n'est pas une sauvegarde valide."); }
+  };
+  r.readAsText(f); e.target.value = "";
+};
+init();
+
+/* ===== À faire et calendrier ===== */
+const TKEY = "suivi-taches-v1";
+const TDB = "https://stage-bbdd3-default-rtdb.europe-west1.firebasedatabase.app/taches.json";
+let tasks = [], view = "cand", selDay = "", cal = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+const ymd = d => d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+const isLate = t => !t.done && t.date && t.date < ymd(new Date());
+function saveTLocal(){ try{ localStorage.setItem(TKEY, JSON.stringify(tasks)); }catch(e){} }
+async function saveTasks(){
+  saveTLocal(); setSync("Synchronisation…");
+  try{
+    const r = await fetch(TDB, {method:"PUT", body: JSON.stringify(tasks)});
+    if(!r.ok) throw new Error(r.status);
+    setSync("Synchronisé avec Firebase");
+  }catch(e){ setSync("Échec de la synchronisation Firebase (copie gardée sur cet appareil)", true); }
+}
+async function loadTasks(){
+  try{ const r = localStorage.getItem(TKEY); tasks = r ? JSON.parse(r) : []; }catch(e){ tasks = []; }
+  renderTodo();
+  try{
+    const r = await fetch(TDB); if(!r.ok) throw new Error(r.status);
+    const d = await r.json();
+    if(d){ tasks = (Array.isArray(d) ? d : Object.values(d)).filter(Boolean); saveTLocal(); renderTodo(); }
+    else if(tasks.length){ await saveTasks(); }
+  }catch(e){}
+}
+function taskHtml(t){
+  return `<div class="task${t.done ? " done" : ""}${isLate(t) ? " late" : ""}">
+    <input type="checkbox" data-tdone="${t.id}" ${t.done ? "checked" : ""} aria-label="Fait">
+    <span class="tt">${esc(t.text)}${isLate(t) ? ' <span class="late-t">en retard</span>' : ""}</span>
+    <input type="date" data-tdate="${t.id}" value="${t.date || ""}" aria-label="Date limite">
+    <button class="small danger" data-tdel="${t.id}">Supprimer</button></div>`;
+}
+const sortT = (a,b) => (a.done - b.done) || ((a.date || "9999") > (b.date || "9999") ? 1 : -1) || a.created - b.created;
+function renderTodo(){
+  const pend = tasks.filter(t => !t.done).length;
+  document.querySelectorAll("[data-view]").forEach(b => b.classList.toggle("on", b.dataset.view === view));
+  const tb = document.querySelector('[data-view="todo"]'); if(tb) tb.textContent = "À faire et calendrier" + (pend ? " (" + pend + ")" : "");
+  $("viewCand").hidden = view !== "cand"; $("viewTodo").hidden = view !== "todo";
+  $("tlist").innerHTML = tasks.length ? tasks.slice().sort(sortT).map(taskHtml).join("") : '<div class="empty">Rien à faire pour l\'instant. Ajoute ta première tâche ci-dessus.</div>';
+  const y = cal.getFullYear(), m = cal.getMonth(), todayS = ymd(new Date());
+  $("ctitle").textContent = cal.toLocaleDateString("fr-FR", {month:"long", year:"numeric"});
+  const offset = (new Date(y, m, 1).getDay() + 6) % 7, dim = new Date(y, m + 1, 0).getDate();
+  let h = ["L","M","M","J","V","S","D"].map(d => `<div class="wd">${d}</div>`).join("");
+  for(let i = 0; i < offset; i++) h += '<div></div>';
+  for(let d = 1; d <= dim; d++){
+    const ds = ymd(new Date(y, m, d)), ts = tasks.filter(t => t.date === ds);
+    h += `<button type="button" class="day${ds === todayS ? " today" : ""}${ds === selDay ? " sel" : ""}" data-day="${ds}"><span class="dn">${d}</span>`
+      + ts.slice(0,2).map(t => `<span class="chip${t.done ? " done" : isLate(t) ? " late" : ""}">${esc(t.text)}</span>`).join("")
+      + (ts.length > 2 ? `<span style="font-size:.7rem">+${ts.length - 2}</span>` : "") + `</button>`;
+  }
+  $("cal").innerHTML = h;
+  const di = selDay ? tasks.filter(t => t.date === selDay) : [];
+  $("dayinfo").innerHTML = selDay ? `<h3 style="margin:14px 0 8px">${fmt(selDay)}</h3>` + (di.length ? di.map(taskHtml).join("") : '<p class="sub">Rien de prévu ce jour-là. La date est préremplie dans le formulaire pour ajouter une tâche.</p>') : "";
+}
+$("views").onclick = e => { const b = e.target.closest("[data-view]"); if(b){ view = b.dataset.view; renderTodo(); } };
+$("tform").onsubmit = e => {
+  e.preventDefault();
+  const text = $("ttext").value.trim(); if(!text) return;
+  tasks.push({id:"t" + Date.now() + Math.random().toString(36).slice(2,5), text, date:$("tdate").value, done:false, created:Date.now()});
+  $("ttext").value = ""; saveTasks(); renderTodo();
+};
+$("viewTodo").onchange = e => {
+  const d = e.target.dataset;
+  if(d.tdone){ tasks = tasks.map(t => t.id === d.tdone ? {...t, done:e.target.checked} : t); saveTasks(); renderTodo(); }
+  if(d.tdate){ tasks = tasks.map(t => t.id === d.tdate ? {...t, date:e.target.value} : t); saveTasks(); renderTodo(); }
+};
+$("viewTodo").onclick = e => {
+  const del = e.target.closest("[data-tdel]"), day = e.target.closest("[data-day]");
+  if(del && confirm("Supprimer cette tâche ?")){ tasks = tasks.filter(t => t.id !== del.dataset.tdel); saveTasks(); renderTodo(); }
+  if(day){ selDay = day.dataset.day; $("tdate").value = selDay; renderTodo(); }
+};
+$("cprev").onclick = () => { cal = new Date(cal.getFullYear(), cal.getMonth() - 1, 1); renderTodo(); };
+$("cnext").onclick = () => { cal = new Date(cal.getFullYear(), cal.getMonth() + 1, 1); renderTodo(); };
+$("ctoday").onclick = () => { const n = new Date(); cal = new Date(n.getFullYear(), n.getMonth(), 1); selDay = ymd(n); $("tdate").value = selDay; renderTodo(); };
+loadTasks();
+</script>
+</body>
+</html>
